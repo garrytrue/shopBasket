@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/add_item"
+        android:title="@string/add_item"
+        android:icon="@drawable/addthis_64"
+        android:showAsAction="always">
+    </item>
+    <item
+        android:id="@+id/clear_selection"
+        android:title="@string/clear_selection"
+        android:icon="@drawable/clear_basket"
+        android:showAsAction="ifRoom">
+    </item>
+    
+    <item
+        android:id="@+id/create_new_bag"
+        android:title="@string/create_new_bag"
+        android:icon="@drawable/add_to_basket"
+        android:showAsAction="always">
+    </item>
+        <item android:id="@+id/clear_table" android:title="@string/clear_table"></item>
+   
+</menu>

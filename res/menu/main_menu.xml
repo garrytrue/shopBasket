@@ -1,0 +1,13 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+        <item
+            android:id="@+id/create_new_list"
+            android:title="@string/new_shopbag"
+            android:icon="@drawable/new_basket"
+            android:showAsAction="always">
+        </item>
+        <item
+            android:id="@+id/exit"
+            android:title="@string/exit">
+        </item>
+  </menu>
