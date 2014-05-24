@@ -268,7 +268,7 @@ public class ItemList extends Activity implements LoaderCallbacks<Cursor> {
 
 			//Set onclickListener on butAdd
 			butOkRename.setOnClickListener(new OnClickListener() {
-
+				//set click listener
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
 					Log.i(TAG, etRename.getText().toString());
