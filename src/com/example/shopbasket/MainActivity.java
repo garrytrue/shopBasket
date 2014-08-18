@@ -183,9 +183,10 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor>{
 		super.onStop();
 		}
 	protected void onDestroy() {
-		super.onDestroy();
+		
 		mLoaderManager.destroyLoader(GROUP_LOADER);
 		mDataBaseIO.closeDB();
+		super.onDestroy();
 	}
 	
 
