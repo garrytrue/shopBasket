@@ -63,7 +63,7 @@ public class ItemList extends Activity implements LoaderCallbacks<Cursor> {
 	LoaderManager loadermanager;
 	private Parcelable stateList;
 
-	public ArrayList<Integer> selectedItemID = new ArrayList<Integer>();  // ������ ��� _id ��������� ��-���
+	public ArrayList<Integer> selectedItemID = new ArrayList<Integer>(); 
 
 	// CONSTANT
 	//CursorLoader ID to ItemList
@@ -71,7 +71,7 @@ public class ItemList extends Activity implements LoaderCallbacks<Cursor> {
 
 
 	private String newItemName, currentItemName;
-	private int currentItemID; // ���������� ���������� ��� �������� � �������� _id ��-��, ������� ���� �� ��������������.
+	private int currentItemID;
 	// Dialog to add Item
 	DialogFragment maddDialog, renameDialog;
 
@@ -139,21 +139,20 @@ public class ItemList extends Activity implements LoaderCallbacks<Cursor> {
 		currentItemID = oneCursorRecord.getInt(oneCursorRecord.getColumnIndex(PurchaseDataBase.KEY_ID_ITEM));
 		currentItemName = oneCursorRecord.getString(oneCursorRecord.getColumnIndex(PurchaseDataBase.ITEM_NAME));
 
-		//��� ������
+		
 		Log.i(TAG, "Current Name is "+currentItemName+" CurrentID is "+String.valueOf(currentItemID)+" Cheked possition: "+ String.valueOf(acmi.position));
 
 
-		//�������� ����� ���� �� ID � �����
+		
 		switch (menuitem.getItemId()){
 
 		case R.id.rename:
-			//������� ������ � ����, � ������ ������ ��� ��������
+			
 			renameDialog.show(getFragmentManager(), "renameDialog");
 			Log.i(TAG, "Updated");
 			break;
 
 		case R.id.delete:
-			//������� ������ �� ����. _id ���������� ��-�� �������� ����� acmi.position+1
 			mDataBaseIO.deleteSingleItem(currentItemID);
 			loadermanager.getLoader(ITEMLISTLOADER_ID).forceLoad();
 			if (!selectedItemID.isEmpty())

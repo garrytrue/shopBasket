@@ -100,11 +100,7 @@ public class DataBaseIO {
 
 		return false;
 	}
-/*
- * ����������� ��������� ��������� �� ������� � ���� � � ������
- * �������� ��� �������� �������� �� ����
- * */
-	
+
 	
 	/*
 	 * Rename single Item in ItemTable */
@@ -207,8 +203,7 @@ public class DataBaseIO {
 	public Cursor getPurchasebyDate(String dateforGetChild){
 	
 		/*
-		 * может заругаться на отсутствие двойных кавычек при передачи строкового параметра в базу
-		 * последняя строка запроса dateforGetChild*/
+		 * String arg ALLWAYS with "_____" dateforGetChild*/
 		Log.i(TAG, dateforGetChild);
 		
 		String sqliteQuery = "SELECT "+PurchaseDataBase.TABLE_PURCHASE+"."+PurchaseDataBase.KEY_ID_PURHCASE+", "

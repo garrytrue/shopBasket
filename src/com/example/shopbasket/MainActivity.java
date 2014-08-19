@@ -31,30 +31,25 @@ import android.widget.Toast;
 
 
 /*
- * 24,04 Проэкт сука нехило затянулся
- * надо разобраться с созданием лоадеров в локальной базе
- * без ContentProveder.
- * Точнее с multiLoaders 
- * На 25,04 Добисать адаптер. Разобраться с children и group. 
- * Как они формируються по какому предикату определяеться что group это group.
- * Или может быть это я сам формирую при выборке из таблицы ????? 
- * Типо первый столбец это и  есть group????
+ * How create loader in LocalDB without ContentProvider
+ * Write ExpandableList Adapter. How crate children and  group. 
+ * What predicate need to group and child?
  * 
- *  C group разобрался: сам придумываешь что будет group а что child
- *  сталось разобраться с multiloaders without ContentProvider
+ * Understand group and child, you own create group and child, where build SQL query
+ * 
+ *  Adapter need _id from DB to create List!!!!!!
  *  
+ *  Problem with invoke search in DB 
+ *  No need MultiLoader, because adapter load data from DB
  *  
- *  МультиЛоадер не нужен так как за загрузку эл-тов списка (детей) отвечает адаптер
- *  какето-то трабла с передачей строки в на поист в DataBaseIO
- *  
- *    Решил надо еще на передавать на адаптер id из базы (для групп и детей)
- *    
- *    Трабла с кликом на детях нажимаю на одном отображаеться + отображаеться и на других(некоторых)
- *    зависимость не установил
- *    Попробовать сделать массив id(из метода OnChildClick) нажатых детей и по нему сравнивать был ли нажат
- *    или нет.
- *    
- *    Попробовать потестить на планшете нажатие детей
+ * 
+ * Problem with childClick (click on one, but appearance change on another)
+ * Try to create arraylist of clicked child and see what child been clicked
+ * Try to test on pad child click
+ * 
+ * 
+ * Solve this invoke bindView and add clickListener as anonymous class in bindView
+ * 
  *    
  */
 
@@ -284,7 +279,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor>{
 			mChildViewHolder.currentchildImageView.setAlpha(itemStatus);
 			
 			if(itemStatus==CHECKED){
-				// Set Text in TEXTVIEW striked install pain flag
+				// Set Text in TEXTVIEW stroked install pain flag
 				mChildViewHolder.currentchildTextView.setPaintFlags(mChildViewHolder.currentchildTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 			}else{
 				mChildViewHolder.currentchildTextView.setPaintFlags(mChildViewHolder.currentchildTextView.getPaintFlags() &(~ Paint.STRIKE_THRU_TEXT_FLAG));

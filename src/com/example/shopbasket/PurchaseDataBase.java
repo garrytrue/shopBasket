@@ -44,7 +44,7 @@ public class PurchaseDataBase extends SQLiteOpenHelper{
 			+ "( " + KEY_ID_PURHCASE + " INTEGER PRIMARY KEY AUTOINCREMENT," + DATE_PURCHASE + " DATETIME," + PURCHASE_FROM_ITEM + " INTEGER not null," + PURCHASE_STATUS + " INTEGER" + ")";
 	
 	
-	//Constractor
+	//Constructor
 	public PurchaseDataBase(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 			}

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
@@ -8,9 +9,9 @@
         android:id="@+id/etRename"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10" 
-        android:inputType="text"
-        android:imeOptions="actionDone">
+        android:ems="10"
+        android:imeOptions="actionDone"
+        android:inputType="text" >
 
         <requestFocus />
     </EditText>
@@ -23,15 +24,17 @@
             android:id="@+id/butCancelRename"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@string/cancel"
-            android:layout_weight="1" />
+            tools:ignore="ButtonStyle" />
 
         <Button
             android:id="@+id/butOkRename"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/ok" />
+            android:text="@string/ok"
+            tools:ignore="ButtonStyle" />
 
     </LinearLayout>
 
