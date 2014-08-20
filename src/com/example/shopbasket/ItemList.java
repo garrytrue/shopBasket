@@ -4,8 +4,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.ArrayList;
 
-
-
 import java.util.Locale;
 
 import com.example.shorbasket.R;
@@ -46,42 +44,32 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
-
-
-
-
-
-
-
 @SuppressLint("ValidFragment")
 public class ItemList extends Activity implements LoaderCallbacks<Cursor> {
 
 	private static DataBaseIO mDataBaseIO;
-	//private SimpleCursorAdapter mSimpleCursorAdapter;
+	// private SimpleCursorAdapter mSimpleCursorAdapter;
 	private ItemAdapter mItemAdapter;
 	LoaderManager loadermanager;
 	private Parcelable stateList;
 
-	public ArrayList<Integer> selectedItemID = new ArrayList<Integer>(); 
+	public ArrayList<Integer> selectedItemID = new ArrayList<Integer>();
 
 	// CONSTANT
-	//CursorLoader ID to ItemList
+	// CursorLoader ID to ItemList
 	private static final int ITEMLISTLOADER_ID = 1;
-
 
 	private String newItemName, currentItemName;
 	private int currentItemID;
 	// Dialog to add Item
 	DialogFragment maddDialog, renameDialog;
 
-	//ListView to display the ItemList
+	// ListView to display the ItemList
 	ListView lvItemList;
 
 	Locale currentLocale;
 
-
-	//My log
+	// My log
 	private static final String TAG = "ShopBasket ItemList.class";
 
 	@Override
@@ -89,42 +77,39 @@ public class ItemList extends Activity implements LoaderCallbacks<Cursor> {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.item_list);
 
-		//Get currentLocale
+		// Get currentLocale
 		currentLocale = getResources().getConfiguration().locale;
 		Log.i(TAG, currentLocale.toString());
 
-		//Cerate and open DATABASE
+		// Cerate and open DATABASE
 		mDataBaseIO = new DataBaseIO(this);
 		mDataBaseIO.openDB();
 
-		//Get LoaderManager
+		// Get LoaderManager
 		loadermanager = getLoaderManager();
 
-		//Create  CursorAdapter
+		// Create CursorAdapter
 		mItemAdapter = new ItemAdapter(this, null, 0);
 
-		//Initialise the Loader
+		// Initialise the Loader
 		loadermanager.initLoader(ITEMLISTLOADER_ID, null, this);
 
-		//Find ListView and set SimpleCursorAdapter to listView
+		// Find ListView and set SimpleCursorAdapter to listView
 		lvItemList = (ListView) findViewById(R.id.item_listView);
 		lvItemList.setAdapter(mItemAdapter);
 		lvItemList.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
-		
 
-		//register ListView for ContextMenu
+		// register ListView for ContextMenu
 		registerForContextMenu(lvItemList);
 
 		stateList = lvItemList.onSaveInstanceState();
-	
 
-		//Create add Dialog and RenameDialog
+		// Create add Dialog and RenameDialog
 		maddDialog = new AddDialog();
 		renameDialog = new RenameDialog();
 
-
 	}
-	
+
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenu.ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
@@ -132,22 +117,25 @@ public class ItemList extends Activity implements LoaderCallbacks<Cursor> {
 		inflater.inflate(R.menu.context_item_menu, menu);
 	}
 
-	public boolean onContextItemSelected (MenuItem menuitem){
+	public boolean onContextItemSelected(MenuItem menuitem) {
 
-		AdapterContextMenuInfo acmi = (AdapterContextMenuInfo) menuitem.getMenuInfo();
-		Cursor oneCursorRecord = (Cursor) lvItemList.getItemAtPosition(acmi.position);
-		currentItemID = oneCursorRecord.getInt(oneCursorRecord.getColumnIndex(PurchaseDataBase.KEY_ID_ITEM));
-		currentItemName = oneCursorRecord.getString(oneCursorRecord.getColumnIndex(PurchaseDataBase.ITEM_NAME));
+		AdapterContextMenuInfo acmi = (AdapterContextMenuInfo) menuitem
+				.getMenuInfo();
+		Cursor oneCursorRecord = (Cursor) lvItemList
+				.getItemAtPosition(acmi.position);
+		currentItemID = oneCursorRecord.getInt(oneCursorRecord
+				.getColumnIndex(PurchaseDataBase.KEY_ID_ITEM));
+		currentItemName = oneCursorRecord.getString(oneCursorRecord
+				.getColumnIndex(PurchaseDataBase.ITEM_NAME));
 
-		
-		Log.i(TAG, "Current Name is "+currentItemName+" CurrentID is "+String.valueOf(currentItemID)+" Cheked possition: "+ String.valueOf(acmi.position));
+		Log.i(TAG, "Current Name is " + currentItemName + " CurrentID is "
+				+ String.valueOf(currentItemID) + " Cheked possition: "
+				+ String.valueOf(acmi.position));
 
-
-		
-		switch (menuitem.getItemId()){
+		switch (menuitem.getItemId()) {
 
 		case R.id.rename:
-			
+
 			renameDialog.show(getFragmentManager(), "renameDialog");
 			Log.i(TAG, "Updated");
 			break;
@@ -156,7 +144,7 @@ public class ItemList extends Activity implements LoaderCallbacks<Cursor> {
 			mDataBaseIO.deleteSingleItem(currentItemID);
 			loadermanager.getLoader(ITEMLISTLOADER_ID).forceLoad();
 			if (!selectedItemID.isEmpty())
-				selectedItemID.remove((Integer)currentItemID);
+				selectedItemID.remove((Integer) currentItemID);
 			Log.i(TAG, "Deleted from DB and from Array");
 			break;
 		}
@@ -164,12 +152,14 @@ public class ItemList extends Activity implements LoaderCallbacks<Cursor> {
 		return super.onContextItemSelected(menuitem);
 
 	}
-	protected void onStart(){
+
+	protected void onStart() {
 		super.onStart();
 		lvItemList.onRestoreInstanceState(stateList);
 		mDataBaseIO.openDB();
 		loadermanager.getLoader(ITEMLISTLOADER_ID).forceLoad();
-		}
+	}
+
 	protected void onResume() {
 		super.onResume();
 		lvItemList.onRestoreInstanceState(stateList);
@@ -177,10 +167,10 @@ public class ItemList extends Activity implements LoaderCallbacks<Cursor> {
 		loadermanager.getLoader(ITEMLISTLOADER_ID).forceLoad();
 	}
 
-	protected void onStop(){
+	protected void onStop() {
 		Log.i(TAG, "onStop() invoke");
 		mDataBaseIO.statusToDefalt();
-		//mDataBaseIO.closeDB();
+		// mDataBaseIO.closeDB();
 		super.onStop();
 	}
 
@@ -190,94 +180,108 @@ public class ItemList extends Activity implements LoaderCallbacks<Cursor> {
 		return true;
 	}
 
-	public boolean onOptionsItemSelected (MenuItem menuitem){
+	public boolean onOptionsItemSelected(MenuItem menuitem) {
 
-		switch(menuitem.getItemId()){
+		switch (menuitem.getItemId()) {
 		case R.id.add_item:
 			maddDialog.show(getFragmentManager(), "addDialog");
 			break;
 
 		case R.id.create_new_bag:
 
-			if(selectedItemID.isEmpty()){
+			if (selectedItemID.isEmpty()) {
 				Log.i(TAG, "Array is empty");
-				Toast.makeText(getApplicationContext(), "Bag is not be empty", Toast.LENGTH_SHORT).show();
-			}
-			else{ 
+				Toast.makeText(getApplicationContext(), "Bag is not be empty",
+						Toast.LENGTH_SHORT).show();
+			} else {
 				showDatePicker();
 
-			}break;
-			
+			}
+			break;
+
 		case R.id.clear_selection:
 			mDataBaseIO.statusToDefalt();
 			loadermanager.getLoader(ITEMLISTLOADER_ID).forceLoad();
-			if(!selectedItemID.isEmpty())
+			if (!selectedItemID.isEmpty())
 				selectedItemID.clear();
 			break;
-			
+
 		case R.id.clear_table:
 			AlertDialog.Builder alertbuilder = new AlertDialog.Builder(this);
-			//setTitle
+			// setTitle
 			alertbuilder.setTitle(R.string.alertdiolog_title);
-			//set Alert Dialog view 
-			alertbuilder.setMessage(R.string.alertdialog_message)
-						.setCancelable(false)
-						.setPositiveButton("Yeas", new DialogInterface.OnClickListener() {
-							
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								// TODO Auto-generated method stub
-								mDataBaseIO.clearTableItem();
-								loadermanager.getLoader(ITEMLISTLOADER_ID).forceLoad();
-							}
-						})
-						.setNegativeButton("No", new DialogInterface.OnClickListener() {
-							
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								// TODO Auto-generated method stub
-								dialog.cancel();
-							}
-						});
-			AlertDialog alertDialog=alertbuilder.create();
+			// set Alert Dialog view
+			alertbuilder
+					.setMessage(R.string.alertdialog_message)
+					.setCancelable(false)
+					.setPositiveButton("Yeas",
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									// TODO Auto-generated method stub
+									mDataBaseIO.clearTableItem();
+									loadermanager.getLoader(ITEMLISTLOADER_ID)
+											.forceLoad();
+								}
+							})
+					.setNegativeButton("No",
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									// TODO Auto-generated method stub
+									dialog.cancel();
+								}
+							});
+			AlertDialog alertDialog = alertbuilder.create();
 			alertDialog.show();
 			break;
 
-		default: break;
+		default:
+			break;
 		}
-
 
 		return true;
 
 	}
-	
 
-	//Create Dialog to Update Item  (ITEM_NAME)
+	// Create Dialog to Update Item (ITEM_NAME)
 
-	public class RenameDialog extends DialogFragment{
+	public class RenameDialog extends DialogFragment {
 
-		public View onCreateView (LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-			getDialog().setTitle("Rename "+currentItemName+" to ");
-			View dialogView = inflater.inflate(R.layout.fragment_rename_item_name, null);
+		public View onCreateView(LayoutInflater inflater, ViewGroup container,
+				Bundle savedInstanceState) {
+			getDialog().setTitle("Rename " + currentItemName + " to ");
+			View dialogView = inflater.inflate(
+					R.layout.fragment_rename_item_name, null);
 
-			//Initial Button in DialogFragment
-			final Button butOkRename = (Button) dialogView.findViewById(R.id.butOkRename);
-			Button butCancelRemane = (Button) dialogView.findViewById(R.id.butCancelRename);
-			final EditText etRename = (EditText) dialogView.findViewById(R.id.etRename);
+			// Initial Button in DialogFragment
+			final Button butOkRename = (Button) dialogView
+					.findViewById(R.id.butOkRename);
+			Button butCancelRemane = (Button) dialogView
+					.findViewById(R.id.butCancelRename);
+			final EditText etRename = (EditText) dialogView
+					.findViewById(R.id.etRename);
 
-			//Set onclickListener on butAdd
+			// Set onclickListener on butAdd
 			butOkRename.setOnClickListener(new OnClickListener() {
-				//set click listener
+				// set click listener
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
 					Log.i(TAG, etRename.getText().toString());
-					if(etRename.getText().toString().isEmpty()){
-						Toast.makeText(getApplicationContext(), "Name is not be empty", Toast.LENGTH_SHORT).show();
-						Log.i(TAG, etRename.getText().toString()+"is EMPTY");
+					if (etRename.getText().toString().isEmpty()) {
+						Toast.makeText(getApplicationContext(),
+								"Name is not be empty", Toast.LENGTH_SHORT)
+								.show();
+						Log.i(TAG, etRename.getText().toString() + "is EMPTY");
 					} else {
 						String renameItemName = etRename.getText().toString();
 
-						mDataBaseIO.renameItemName(renameItemName, currentItemID);
+						mDataBaseIO.renameItemName(renameItemName,
+								currentItemID);
 
 						loadermanager.getLoader(ITEMLISTLOADER_ID).forceLoad();
 
@@ -287,7 +291,7 @@ public class ItemList extends Activity implements LoaderCallbacks<Cursor> {
 
 			});
 
-			//Set onClickListener on butCancel
+			// Set onClickListener on butCancel
 			butCancelRemane.setOnClickListener(new OnClickListener() {
 
 				@Override
@@ -302,48 +306,50 @@ public class ItemList extends Activity implements LoaderCallbacks<Cursor> {
 
 	}
 
+	// Create Dialog to add Item
+	public class AddDialog extends DialogFragment {
 
-	//Create Dialog to add Item
-	public class AddDialog extends DialogFragment{
-
-		public View onCreateView (LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+		public View onCreateView(LayoutInflater inflater, ViewGroup container,
+				Bundle savedInstanceState) {
 			getDialog().setTitle("Create new item");
-			View dialogView = inflater.inflate(R.layout.fragment_add_item_name, null);
+			View dialogView = inflater.inflate(R.layout.fragment_add_item_name,
+					null);
 
-			//Initial Button in DialogFragment
+			// Initial Button in DialogFragment
 			final Button butAdd = (Button) dialogView.findViewById(R.id.butAdd);
 			Button butCancel = (Button) dialogView.findViewById(R.id.butCancel);
 
-			//Initial InputText Field
-			final EditText etNewName = (EditText) dialogView.findViewById(R.id.editText1);
+			// Initial InputText Field
+			final EditText etNewName = (EditText) dialogView
+					.findViewById(R.id.editText1);
 			etNewName.setText("");
 
-
-
-			//Set onclickListener on butAdd
+			// Set onclickListener on butAdd
 			butAdd.setOnClickListener(new OnClickListener() {
 
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
 					Log.i(TAG, etNewName.getText().toString());
-					if(etNewName.getText().toString().isEmpty()){
-						Toast.makeText(getApplicationContext(), "Name is not be empty", Toast.LENGTH_SHORT).show();
-						Log.i(TAG, etNewName.getText().toString()+"is EMPTY");
+					if (etNewName.getText().toString().isEmpty()) {
+						Toast.makeText(getApplicationContext(),
+								"Name is not be empty", Toast.LENGTH_SHORT)
+								.show();
+						Log.i(TAG, etNewName.getText().toString() + "is EMPTY");
 					} else {
 						newItemName = etNewName.getText().toString();
 
 						mDataBaseIO.addItemName(newItemName);
-						//loadermanager.getLoader(ITEMLISTLOADER_ID).forceLoad();
+						// loadermanager.getLoader(ITEMLISTLOADER_ID).forceLoad();
 						etNewName.setText("");
 						loadermanager.getLoader(ITEMLISTLOADER_ID).forceLoad();
 						dismiss();
-												
+
 					}
 				}
 
 			});
 
-			//Set onClickListener on butCancel
+			// Set onClickListener on butCancel
 			butCancel.setOnClickListener(new OnClickListener() {
 
 				@Override
@@ -358,11 +364,11 @@ public class ItemList extends Activity implements LoaderCallbacks<Cursor> {
 
 	}
 
-	//Create SETDATE Dialog
-	public class SetDateDialog extends DialogFragment implements DatePickerDialog.OnDateSetListener{
+	// Create SETDATE Dialog
+	public class SetDateDialog extends DialogFragment implements
+			DatePickerDialog.OnDateSetListener {
 
 		boolean oneInvoke = true;
-
 
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -380,12 +386,18 @@ public class ItemList extends Activity implements LoaderCallbacks<Cursor> {
 		@Override
 		public void onDateSet(DatePicker view, int year, int monthOfYear,
 				int dayOfMonth) {
-			if(oneInvoke){
+			if (oneInvoke) {
 				oneInvoke = false;
-				Log.i(TAG, "Year: "+String.valueOf(year)+" Month: "+String.valueOf(monthOfYear)+" Day: "+String.valueOf(dayOfMonth));
+				Log.i(TAG,
+						"Year: " + String.valueOf(year) + " Month: "
+								+ String.valueOf(monthOfYear) + " Day: "
+								+ String.valueOf(dayOfMonth));
 				returnSettedDate(year, monthOfYear, dayOfMonth);
-				Log.i(TAG, returnSettedDate(year, monthOfYear, dayOfMonth).toString());
-				mDataBaseIO.addPurchase(returnSettedDate(year, monthOfYear, dayOfMonth), selectedItemID);
+				Log.i(TAG, returnSettedDate(year, monthOfYear, dayOfMonth)
+						.toString());
+				mDataBaseIO.addPurchase(
+						returnSettedDate(year, monthOfYear, dayOfMonth),
+						selectedItemID);
 				selectedItemID.clear();
 				getActivity().setResult(RESULT_OK);
 				getActivity().finish();
@@ -394,8 +406,8 @@ public class ItemList extends Activity implements LoaderCallbacks<Cursor> {
 			}
 
 		}
-		public Date returnSettedDate (int year, int monthOfYear,
-				int dayOfMonth){
+
+		public Date returnSettedDate(int year, int monthOfYear, int dayOfMonth) {
 			Date inDialogSettedDate = new Date();
 			Calendar setedCalendar = Calendar.getInstance(currentLocale);
 			setedCalendar.set(year, monthOfYear, dayOfMonth);
@@ -407,24 +419,15 @@ public class ItemList extends Activity implements LoaderCallbacks<Cursor> {
 
 	}
 
-
-	private void showDatePicker(){
+	private void showDatePicker() {
 		DialogFragment setDateDialog = new SetDateDialog();
 		setDateDialog.show(getFragmentManager(), "setDate");
 
 	}
 
-
-
-
-
-
-
-
-
 	/*
-	 * Method to work with loader*/
-
+	 * Method to work with loader
+	 */
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -436,22 +439,24 @@ public class ItemList extends Activity implements LoaderCallbacks<Cursor> {
 	@Override
 	public void onLoadFinished(Loader<Cursor> arg0, Cursor cursor) {
 		// TODO Auto-generated method stub
-		if(mItemAdapter != null && cursor != null){
+		if (mItemAdapter != null && cursor != null) {
 			mItemAdapter.swapCursor(cursor);
-			Log.i(TAG, "onLoadFinished: "+cursor.toString());
+			Log.i(TAG, "onLoadFinished: " + cursor.toString());
 		}
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> arg0) {
 		// TODO Auto-generated method stub
-		if(mItemAdapter != null)
+		if (mItemAdapter != null)
 			mItemAdapter.swapCursor(null);
-		else Log.i(TAG, "onLoaderReset mSimpleCursorAdapter is null");
+		else
+			Log.i(TAG, "onLoaderReset mSimpleCursorAdapter is null");
 
 	}
 
-	//Inner class implemented cursor loader need to convert Loader<Cursor> to Cursor
+	// Inner class implemented cursor loader need to convert Loader<Cursor> to
+	// Cursor
 	static class MyLoaderCursortoCursor extends CursorLoader {
 
 		private DataBaseIO dbIO;
@@ -463,24 +468,25 @@ public class ItemList extends Activity implements LoaderCallbacks<Cursor> {
 
 		}
 
-		public Cursor loadInBackground(){
+		public Cursor loadInBackground() {
 			Cursor cursor = dbIO.getAllItemCursor();
 			return cursor;
 
 		}
 
 	}
-	// Holder class need to hold information from ItemAdapter.newView() to build  view
 
-	static class ViewHolder{
+	// Holder class need to hold information from ItemAdapter.newView() to build
+	// view
+
+	static class ViewHolder {
 
 		protected TextView currentTextView;
 		protected ImageView currentImageView;
 	}
 
-
-	//Item Adapter class create the adapter
-	class ItemAdapter extends CursorAdapter{
+	// Item Adapter class create the adapter
+	class ItemAdapter extends CursorAdapter {
 
 		private LayoutInflater mLayoutInflater;
 		private static final String TAG = "ItemAdapter.class Inner";
@@ -490,7 +496,8 @@ public class ItemList extends Activity implements LoaderCallbacks<Cursor> {
 		public ItemAdapter(Context context, Cursor c, int flags) {
 			super(context, c, flags);
 
-			mLayoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			mLayoutInflater = (LayoutInflater) context
+					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 		}
 
@@ -498,39 +505,45 @@ public class ItemList extends Activity implements LoaderCallbacks<Cursor> {
 		public void bindView(View view, Context context, Cursor cursor) {
 			// TODO Auto-generated method stub
 			Log.i(TAG, "Invoke bindView()");
-			currentItemID =0;
+			currentItemID = 0;
 
 			mbindViewHolder = (ViewHolder) view.getTag();
-			
-			//Input data from cursor to view(saved view get from HolderView)
-			mbindViewHolder.currentTextView.setText(
-					cursor.getString(cursor.getColumnIndex(PurchaseDataBase.ITEM_NAME)));
-			
-			mbindViewHolder.currentImageView.setAlpha(cursor.getFloat(cursor.getColumnIndex(PurchaseDataBase.ITEM_STATUS)));
-			
-			//This variable need to get access in database record in ClickListener
-			currentItemID = cursor.getInt(cursor.getColumnIndex(PurchaseDataBase.KEY_ID_ITEM));
-			int statusitem = cursor.getInt(cursor.getColumnIndex(PurchaseDataBase.ITEM_STATUS));
-			
-			///Set different surface to TextView(which position checked or not)
-			if(statusitem == 1){
-				mbindViewHolder.currentTextView.setTypeface(null, Typeface.BOLD_ITALIC);
-				
-			}else{
-				mbindViewHolder.currentTextView.setTypeface(null, Typeface.NORMAL);
-				
+
+			// Input data from cursor to view(saved view get from HolderView)
+			mbindViewHolder.currentTextView.setText(cursor.getString(cursor
+					.getColumnIndex(PurchaseDataBase.ITEM_NAME)));
+
+			mbindViewHolder.currentImageView.setAlpha(cursor.getFloat(cursor
+					.getColumnIndex(PurchaseDataBase.ITEM_STATUS)));
+
+			// This variable need to get access in database record in
+			// ClickListener
+			currentItemID = cursor.getInt(cursor
+					.getColumnIndex(PurchaseDataBase.KEY_ID_ITEM));
+			int statusitem = cursor.getInt(cursor
+					.getColumnIndex(PurchaseDataBase.ITEM_STATUS));
+
+			// /Set different surface to TextView(which position checked or not)
+			if (statusitem == 1) {
+				mbindViewHolder.currentTextView.setTypeface(null,
+						Typeface.BOLD_ITALIC);
+
+			} else {
+				mbindViewHolder.currentTextView.setTypeface(null,
+						Typeface.NORMAL);
+
 			}
-			
-			
-			mbindViewHolder.currentTextView.setOnClickListener(new MyTextViewListener(mbindViewHolder.currentTextView,
-					cursor.getPosition(), currentItemID, statusitem));
-			
-		
-			Log.i(TAG, mbindViewHolder.currentTextView.getText()+ " status: "+ String.valueOf(statusitem));
-			Log.i(TAG, String.valueOf(mbindViewHolder.currentTextView.getTag(position)));
-			Log.i(TAG, "Count: "+ String.valueOf(cursor.getCount()));
 
+			mbindViewHolder.currentTextView
+					.setOnClickListener(new MyTextViewListener(
+							mbindViewHolder.currentTextView, cursor
+									.getPosition(), currentItemID, statusitem));
 
+			Log.i(TAG, mbindViewHolder.currentTextView.getText() + " status: "
+					+ String.valueOf(statusitem));
+			Log.i(TAG, String.valueOf(mbindViewHolder.currentTextView
+					.getTag(position)));
+			Log.i(TAG, "Count: " + String.valueOf(cursor.getCount()));
 
 		}
 
@@ -539,10 +552,13 @@ public class ItemList extends Activity implements LoaderCallbacks<Cursor> {
 			Log.i(TAG, "Invoke newView()");
 			// TODO Auto-generated method stub
 			ViewHolder mViewHolder = new ViewHolder();
-			View currentView = mLayoutInflater.inflate(R.layout.item_layout,parent,false);
-			mViewHolder.currentTextView = (TextView) currentView.findViewById(R.id.itemName);
-			
-			mViewHolder.currentImageView = (ImageView) currentView.findViewById(R.id.itemstatus_img);
+			View currentView = mLayoutInflater.inflate(R.layout.item_layout,
+					parent, false);
+			mViewHolder.currentTextView = (TextView) currentView
+					.findViewById(R.id.itemName);
+
+			mViewHolder.currentImageView = (ImageView) currentView
+					.findViewById(R.id.itemstatus_img);
 
 			mViewHolder.currentTextView.setTag(cursor.getPosition());
 
@@ -551,17 +567,17 @@ public class ItemList extends Activity implements LoaderCallbacks<Cursor> {
 		}
 
 		class MyTextViewListener implements View.OnClickListener {
-			
+
 			final static int CHECKED = 1;
 			final static int UNCHECKED = 0;
-			
+
 			View mview;
 			int curposition;
 			int currentIDforItem;
 			int itemISchecked;
 
-
-			public MyTextViewListener(View v, int position, int currentID, int itemstatus) {
+			public MyTextViewListener(View v, int position, int currentID,
+					int itemstatus) {
 				// TODO Auto-generated constructor stub
 
 				this.mview = v;
@@ -573,29 +589,31 @@ public class ItemList extends Activity implements LoaderCallbacks<Cursor> {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				Log.i(TAG, "InsideOnClick v.getTag "+ String.valueOf((Integer)v.getTag()));
-				Log.i(TAG, "Inside Onclick position "+String.valueOf(this.curposition));
-				Log.i(TAG, "CurrentID in Onclick: "+String.valueOf(currentIDforItem));
-							
-						if(itemISchecked==1){
-							mDataBaseIO.addItemStatus(UNCHECKED, currentIDforItem);
-							selectedItemID.remove((Integer)currentIDforItem);
-													}else{
-							mDataBaseIO.addItemStatus(CHECKED, currentIDforItem);
-							selectedItemID.add(currentIDforItem);
+				Log.i(TAG,
+						"InsideOnClick v.getTag "
+								+ String.valueOf((Integer) v.getTag()));
+				Log.i(TAG,
+						"Inside Onclick position "
+								+ String.valueOf(this.curposition));
+				Log.i(TAG,
+						"CurrentID in Onclick: "
+								+ String.valueOf(currentIDforItem));
 
-						}
-					//Log.i(TAG, "status in onClick "+String.valueOf(mbindViewHolder.currentCheckBox.isChecked()));
-					loadermanager.getLoader(ITEMLISTLOADER_ID).forceLoad();
-					Log.i(TAG, "Array: "+ selectedItemID.toString());
+				if (itemISchecked == 1) {
+					mDataBaseIO.addItemStatus(UNCHECKED, currentIDforItem);
+					selectedItemID.remove((Integer) currentIDforItem);
+				} else {
+					mDataBaseIO.addItemStatus(CHECKED, currentIDforItem);
+					selectedItemID.add(currentIDforItem);
+
+				}
+				// Log.i(TAG,
+				// "status in onClick "+String.valueOf(mbindViewHolder.currentCheckBox.isChecked()));
+				loadermanager.getLoader(ITEMLISTLOADER_ID).forceLoad();
+				Log.i(TAG, "Array: " + selectedItemID.toString());
 			}
 		}
 
-
 	}
 
-
 }
-
-
-
